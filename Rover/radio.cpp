@@ -137,6 +137,18 @@ void Rover::read_radio()
     // check that RC value are valid
     radio_failsafe_check(channel_throttle->get_radio_in());
 
+    hal.gpio->init();
+    hal.gpio->pinMode(54, HAL_GPIO_OUTPUT);
+    hal.gpio->pinMode(55, HAL_GPIO_OUTPUT);
+    if(channel_throttle->get_radio_in()<1430){
+        hal.gpio->write(54,0);
+        hal.gpio->write(55,1);
+    }
+    else{
+        hal.gpio->write(54,1);
+        hal.gpio->write(55,0);
+    }
+
     // check if we try to do RC arm/disarm
     rudder_arm_disarm_check();
 }
