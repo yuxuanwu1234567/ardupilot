@@ -226,6 +226,56 @@ void AP_MotorsUGV::set_steering(float steering, bool apply_scaling)
 {
     _steering = steering;
     _scale_steering = apply_scaling;
+
+    int16_t z_throttle=_throttle,z_roll=_steering;
+   
+    if (z_throttle>=3){
+        if (z_roll<=-200){
+            
+            hal.gpio->write(54,0);
+            hal.gpio->write(55,0);
+        }
+        else if (z_roll>=200){
+            
+            hal.gpio->write(54,1);
+            hal.gpio->write(55,1);
+        }
+        else{
+            
+            hal.gpio->write(54,1);
+            hal.gpio->write(55,0);
+        }
+        
+    }
+    else if(z_throttle<=-3){
+        if (z_roll>=200){
+            
+            hal.gpio->write(54,1);
+            hal.gpio->write(55,1);
+        }
+        else if (z_roll<=-200){
+            
+            hal.gpio->write(54,0);
+            hal.gpio->write(55,0);
+        }
+        else{
+            
+            hal.gpio->write(54,0);
+            hal.gpio->write(55,1);
+        }
+    }
+    else{
+        if (z_roll<=-200){
+            
+            hal.gpio->write(54,0);
+            hal.gpio->write(55,0);
+        }
+        else if (z_roll>=200){
+            
+            hal.gpio->write(54,1);
+            hal.gpio->write(55,1);
+        }
+    }
 }
 
 // set throttle as a value from -100 to 100

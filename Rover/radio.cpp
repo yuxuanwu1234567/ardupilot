@@ -58,6 +58,9 @@ void Rover::init_rc_in()
     if (channel_lateral != nullptr) {
         channel_lateral->set_default_dead_zone(30);
     }
+    hal.gpio->init();
+    hal.gpio->pinMode(54, HAL_GPIO_OUTPUT);
+    hal.gpio->pinMode(55, HAL_GPIO_OUTPUT);
 }
 
 /*
@@ -136,59 +139,6 @@ void Rover::read_radio()
     failsafe.last_valid_rc_ms = AP_HAL::millis();
     // check that RC value are valid
     radio_failsafe_check(channel_throttle->get_radio_in());
-
-    hal.gpio->init();
-    hal.gpio->pinMode(54, HAL_GPIO_OUTPUT);
-    hal.gpio->pinMode(55, HAL_GPIO_OUTPUT);
-    int16_t z_throttle=channel_throttle->get_radio_in(),z_roll=channel_steer->get_control_in();
-    if (z_throttle>=1440){
-        if (z_roll<=-100){
-            
-            hal.gpio->write(54,0);
-            hal.gpio->write(55,0);
-        }
-        else if (z_roll>=100){
-            
-            hal.gpio->write(54,1);
-            hal.gpio->write(55,1);
-        }
-        else{
-            
-            hal.gpio->write(54,1);
-            hal.gpio->write(55,0);
-        }
-        
-    }
-    else if(z_throttle<=1420){
-        if (z_roll<=-100){
-            
-            hal.gpio->write(54,1);
-            hal.gpio->write(55,1);
-        }
-        else if (z_roll>=100){
-            
-            hal.gpio->write(54,0);
-            hal.gpio->write(55,0);
-        }
-        else{
-            
-            hal.gpio->write(54,0);
-            hal.gpio->write(55,1);
-        }
-    }
-    else{
-        if (z_roll<=-100){
-            
-            hal.gpio->write(54,0);
-            hal.gpio->write(55,0);
-        }
-        else if (z_roll>=100){
-            
-            hal.gpio->write(54,1);
-            hal.gpio->write(55,1);
-        }
-    }
-
     // check if we try to do RC arm/disarm
     rudder_arm_disarm_check();
 }
